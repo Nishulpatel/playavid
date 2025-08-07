@@ -7,6 +7,7 @@ import User from "@/models/Users";
 import bcrypt from "bcryptjs";
 
 
+
 export const authOptions: NextAuthOptions = {
 
     // Configure one or more authentication providers
@@ -80,7 +81,7 @@ callbacks: {
         const newUser = await User.create({
           email: token.email,
           name: profile?.name || "No Name",
-          image: profile?.picture || "",
+          image: (profile as any)?.picture || "",
           password: "",
         });
 
