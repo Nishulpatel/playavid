@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ImageKitAbortError,
   ImageKitInvalidRequestError,
@@ -9,6 +7,7 @@ import {
   UploadResponse,
 } from "@imagekit/next";
 import { useRef, useState } from "react";
+import { ShimmerButton } from "./magicui/shimmer-button";
 
 interface FileUploadProps {
   onSuccess: (res: UploadResponse) => void;
@@ -43,6 +42,7 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
 
     setUploading(true);
     setError(null);
+    
 
     // upload file allows us to upload file to imagekit
     try {
@@ -68,6 +68,8 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
                 },
         })
 
+        console.log("authData", authData);
+
         onSuccess(res);
 
     } catch (error) {
@@ -80,15 +82,34 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
   }
 
   return (
-    <>
-      <input type="file"
-      accept= {fileType === "video" ? "video/*" : "image/*"}
-      onChange={handleFileChange} />
+<>
+  <div className="w-full flex flex-col items-center justify-center gap-4 p-4 border border-dashed border-gray-500 rounded-xl  transition duration-200 ease-in-out">
+    <label className="text-sm font-semibold text-gray-700">
+      Upload {fileType === "video" ? "Video" : "Image"}
+    </label>
 
-      {uploading && <p> Uploading...</p>}
-      {error && <p>{error}</p>}
-      
-    </>
+    <input
+      type="file"
+      accept={fileType === "video" ? "video/*" : "image/*"}
+      onChange={handleFileChange}
+      className="block w-fit text-sm text-gray-700
+                 file:mr-4 file:py-2 file:px-4
+                 file:rounded-lg file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-neutral-300 file:text-neutral-700
+                 cursor-pointer"
+    />
+
+    {uploading && (
+      <p className="text-sm text-blue-400 animate-pulse">⏳ Uploading...</p>
+    )}
+
+    {error && (
+      <p className="text-sm text-red-500 font-medium">❌ {error}</p>
+    )}
+  </div>
+</>
+
   );
 };
 

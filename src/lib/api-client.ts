@@ -50,11 +50,11 @@ class ApiClient {
 
     //get all videos
     async getVideos() {
-        return this.fetch("/video")
+        return this.fetch("/videos")
     }
 
     async createVideo(VideoData : videoFormData) {
-        return this.fetch("/video" , {
+        return this.fetch("/videos" , {
             method : "POST",
             body : VideoData
         })

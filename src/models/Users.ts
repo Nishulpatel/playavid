@@ -1,13 +1,12 @@
 import mongoose, {Schema, models , model }from "mongoose";
 import bcrypt from "bcryptjs";
-import { time } from "console";
 
 
 //Step 1 : make an interface
 
 export interface IUser {
     email : string;
-    password : string;
+    password? : string;
     _id?: string;
     createdAt?: Date;
     updatedAt? : Date;
@@ -19,7 +18,7 @@ const userSchema = new Schema<IUser>(
 
     {
         email : {type : String , required : true},
-        password : {type : String , required : true},
+        password : {type : String , required : false},
 
     },
     {
@@ -30,13 +29,18 @@ const userSchema = new Schema<IUser>(
 
 // step 3 : use hooks = pre
 
-userSchema.pre('save' , async function (next) {
-   if(this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password , 10);
-   }
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password') || !this.password) {
+    return next();
+  }
 
-   next();
-    
+  try {
+    const hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+    next();
+  } catch (err) {
+    next(err as Error);
+  }
 });
 
 

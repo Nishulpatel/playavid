@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 // Get the MongoDB connection URI from environment variables
-const MONODB_URI = process.env.MONODB_URI!;
+const MONODB_URI = process.env.MONGODB_URI!;
 
 // If MONODB_URI is not provided, throw an error
 // This helps prevent running the app without a database connection string

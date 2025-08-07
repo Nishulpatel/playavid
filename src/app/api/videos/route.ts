@@ -8,15 +8,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    //for connect to db
     await connectToDb();
     const Videos = await Video.find({}).sort({ createdAt: -1 }).lean();
 
     if (!Videos || Videos.length === 0) {
-      return NextResponse.json({ error: "Videos not found" }, { status: 404 });
+      return NextResponse.json([], { status: 200 }); 
     }
 
-    return NextResponse.json({ Videos }, { status: 200 });
+    return NextResponse.json(Videos, { status: 200 }); 
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
@@ -24,6 +23,7 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 
 export async function POST(req: NextRequest) {
   try {

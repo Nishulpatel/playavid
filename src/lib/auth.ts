@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 // import GithubProvider from "next-auth/providers/github"
-// import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDb } from "./db";
 import User from "@/models/Users";
@@ -16,10 +16,12 @@ export const authOptions: NextAuthOptions = {
 //       clientId: process.env.GITHUB_ID!,
 //       clientSecret: process.env.GITHUB_SECRET!,
 //     }),
-//      GoogleProvider({
-//     clientId: process.env.GOOGLE_CLIENT_ID!,
-//     clientSecret: process.env.GOOGLE_CLIENT_SECRET!
-//   })
+
+
+     GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+  }),
 
 //----------------------------------------------
 
@@ -68,24 +70,41 @@ export const authOptions: NextAuthOptions = {
 
       })
   ],
+callbacks: {
+  async jwt({ token, user, account, profile }) {
+    if (account?.provider === "google") {
+      await connectToDb();
+      const existingUser = await User.findOne({ email: token.email });
 
-  callbacks : {
-     async jwt({ token, user,}) {
+      if (!existingUser) {
+        const newUser = await User.create({
+          email: token.email,
+          name: profile?.name || "No Name",
+          image: profile?.picture || "",
+          password: "",
+        });
 
-        if(user) {
-            token.id = user.id;
-        }
+        token.id = newUser._id.toString();
+      } else {
+        token.id = existingUser._id.toString();
+      }
+    }
 
-        return token;
+    if (user) {
+      token.id = user.id;
+    }
 
-     },
-     async session({session , token}) {
-        if(token) {
-            session.user.id = token.id as string
-        }
-        return session;
-     }
+    return token;
   },
+
+  async session({ session, token }) {
+    if (token) {
+      session.user.id = token.id as string;
+    }
+    return session;
+  }
+}
+,
 
   //add page for login
 
