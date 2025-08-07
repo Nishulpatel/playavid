@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 
 export default async function HomePage() {
   // Fetch video data from internal API route
-  const res = await fetch("http://localhost:3001/api/videos", {
+  const res = await fetch(`/api/videos`, {
     cache: "no-store", // always get fresh data
   });
 
