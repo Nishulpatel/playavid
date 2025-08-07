@@ -81,7 +81,6 @@ callbacks: {
         const newUser = await User.create({
           email: token.email,
           name: profile?.name || "No Name",
-          image: (profile as any)?.picture || "",
           password: "",
         });
 
