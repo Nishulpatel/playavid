@@ -52,11 +52,14 @@ const RegisterPage = () => {
       }
 
       router.push("/register");
-    } catch (error: any) {
-      alert(error.message || "Something went wrong");
-    }
-  };
-
+  } catch (error) {
+  if (error instanceof Error) {
+    alert(error.message || "Something went wrong");
+  } else {
+    alert("Something went wrong");
+  }
+}
+  }
 
 
     const handleGoogleLogin = async () => {

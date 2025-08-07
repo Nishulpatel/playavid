@@ -10,7 +10,7 @@ export type videoFormData = Omit<IVideo , "_id">
 
 type FatchOptions = {
     method? : "GET" | "POST" | "PUT" | "DELETE";
-    body? : any;
+    body? : object;
     headers? : Record<string , string>
 }
 
