@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 
 export default async function HomePage() {
   // Fetch video data from internal API route
-  const res = await fetch(`/api/videos`, {
+  const res = await fetch(` ${process.env.NEXTAUTH_URL}/api/videos`, {
     cache: "no-store", // always get fresh data
   });
 
