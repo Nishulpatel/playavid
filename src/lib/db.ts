@@ -2,11 +2,11 @@
 import mongoose from "mongoose";
 
 // Get the MongoDB connection URI from environment variables
-const MONODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI!;
 
 // If MONODB_URI is not provided, throw an error
 // This helps prevent running the app without a database connection string
-if (!MONODB_URI) {
+if (!MONGODB_URI) {
     throw new Error('MONGODB_URI is not defined');
 }
 
@@ -41,7 +41,7 @@ export async function connectToDb() {
 
         // Start connecting and cache the promise
         cached.promise = mongoose
-            .connect(MONODB_URI, opts)
+            .connect(MONGODB_URI, opts)
             .then(() => mongoose.connection);
     }
 
