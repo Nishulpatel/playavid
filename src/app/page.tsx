@@ -3,6 +3,7 @@
 import VideoFeed from "@/components/VideoFeed";
 import { IVideo } from "@/models/Videos";
 import Header from "@/components/Header";
+import AppShell from "@/components/app-shell";
 
 export default async function HomePage() {
   // Fetch video data from internal API route
@@ -14,11 +15,14 @@ export default async function HomePage() {
     // fallback if fetch fails
     return (
       <>
-        <Header />
+            <Header />
+      <AppShell>
+  
         <main className="container mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4">Explore Videos</h1>
+          <h1 className="text-2xl font-bold mb-4">Sign in to Explore Videos</h1>
           <p className="text-error">Failed to load videos.</p>
         </main>
+        </AppShell>
       </>
     );
   }
@@ -27,11 +31,14 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header />
+
+    <AppShell>
+    
       <main className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Explore Videos</h1>
         <VideoFeed videos={videos} />
       </main>
+      </AppShell>
     </>
   );
 }

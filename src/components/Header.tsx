@@ -1,24 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { Home, User, Upload, LogOut, LogIn } from "lucide-react";
+import { useState } from "react";
+import { Home, Upload, LogOut, LogIn, Menu, Search } from "lucide-react";
 import { useNotification } from "./Notification";
-import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
-// Navigation links array for authenticated users
-const navigationLinks = [
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+// Authenticated nav links
+const navLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/upload", label: "Upload", icon: Upload },
 ];
@@ -26,6 +36,29 @@ const navigationLinks = [
 export default function Header() {
   const { data: session } = useSession();
   const { showNotification } = useNotification();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [open, setOpen] = useState(false);
+
+  const initials =
+    session?.user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() ||
+    session?.user?.email?.[0]?.toUpperCase() ||
+    "?";
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get("q") as string;
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query)}`);
+      showNotification(`Searching for "${query}"`, "info");
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -37,176 +70,165 @@ export default function Header() {
   };
 
   return (
-    <header className="border-b bg-white border-gray-200 px-4 md:px-6 sticky top-0 z-50">
-      <div className="flex h-16 items-center justify-between gap-4">
-        {/* Left side */}
+    <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-14 items-center justify-between gap-3 px-4">
+        {/* Left section: Mobile Menu + Logo */}
         <div className="flex items-center gap-2">
-          {/* Mobile menu trigger - only show if authenticated */}
-          {session && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  className="group size-8 md:hidden text-gray-300 hover:text-white"
-                  variant="ghost"
-                  size="icon"
-                >
-                  <svg
-                    className="pointer-events-none"
-                    width={16}
-                    height={16}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4 12L20 12"
-                      className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
-                    />
-                    <path
-                      d="M4 12H20"
-                      className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
-                    />
-                    <path
-                      d="M4 12H20"
-                      className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
-                    />
-                  </svg>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="start" className="w-36 p-1 md:hidden bg-black border-gray-800">
-                <NavigationMenu className="max-w-none *:w-full">
-                  <NavigationMenuList className="flex-col items-start gap-0">
-                    {navigationLinks.map((link, index) => (
-                      <NavigationMenuItem key={index} className="flex w-full">
-                        <NavigationMenuLink
-                          asChild
-                          className="py-1.5 text-gray-600 hover:text-white hover:bg-neutral-700 w-full flex items-center gap-2"
-                        >
-                          <Link
-                            href={link.href}
-                            onClick={() =>
-                              showNotification(`Navigating to ${link.label}`, "info")
-                            }
-                          >
-                            <link.icon className="w-4 h-4" />
-                            {link.label}
-                          </Link>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    ))}
-                  </NavigationMenuList>
-                </NavigationMenu>
-              </PopoverContent>
-            </Popover>
-          )}
 
-          {/* Main nav */}
-          <div className="flex items-center gap-6">
-            {/* Desktop Navigation menu - only show if authenticated */}
-            {session && (
-              <NavigationMenu className="max-md:hidden">
-                <NavigationMenuList className="gap-2">
-                  {navigationLinks.map((link, index) => (
-                    <NavigationMenuItem key={index}>
-                      <NavigationMenuLink
-                        asChild
-                        className="text-gray-600  hover:bg-neutral-200 py-1.5 px-3 font-medium transition-colors duration-200 flex items-center gap-2"
-                      >
-                        <Link
-                        className="text-gray-600 hover:bg-neutral-200 py-1.5 px-3 font-medium transition-colors duration-200 flex items-center gap-2"
-                          href={link.href}
-                          onClick={() =>
-                            showNotification(`Navigating to ${link.label}`, "info")
-                          }
-                        >
-                          <link.icon className="w-4 h-4" />
-                          {link.label}
-                        </Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                  ))}
-                </NavigationMenuList>
-              </NavigationMenu>
-            )}
-          </div>
+
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-semibold"
+            prefetch={false}
+          >
+            <img
+              src="/logo.png"
+              alt="Logo"
+              className="h-16 w-16 rounded"
+            />
+            <span className="hidden sm:inline">PlayaVid</span>
+          </Link>
+
         </div>
 
-        {/* Right side */}
+        {/* Desktop search */}
+        <form
+          onSubmit={handleSearch}
+          className="hidden min-w-0 flex-1 items-center sm:flex"
+        >
+          <div className="relative mx-auto w-full max-w-xl">
+            <Input
+              name="q"
+              aria-label="Search"
+              placeholder="Search videos"
+              className="w-full pl-9"
+            />
+            <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </form>
+
+        {/* Right section */}
+
         <div className="flex items-center gap-2">
+
+                    {/* sidebar open */}
+          <div className="md:hidden ">
+          {session && (
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Open navigation">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[280px]">
+                <SheetHeader>
+                  <SheetTitle>PlayaVid</SheetTitle>
+                </SheetHeader>
+                <nav className="mt-4 grid gap-1">
+                  {navLinks.map((item) => {
+                    const active = pathname === item.href;
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-accent hover:text-accent-foreground",
+                          active && "bg-accent text-accent-foreground"
+                        )}
+                        onClick={() => {
+                          setOpen(false);
+                          showNotification(`Navigating to ${item.label}`, "info");
+                        }}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          )}
+          </div>
+          
           {session ? (
-            <>
-              {/* User info and menu */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-sm text-gray-600 hover:bg-neutral-200 gap-2 "
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-9 w-9 rounded-full p-0"
+                >
+                  <span
+                    aria-hidden
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground"
                   >
-                    <User className="w-4 h-4" />
-                    <span className="hidden sm:block max-w-32 truncate">
-                      {session.user?.email?.split("@")[0]}
-                    </span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-64 p-2 bg-neutral-700 border-gray-800">
-                  <div className="space-y-2">
-                    {/* User info */}
-                    <div className="px-2 py-2 border-b border-gray-500">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-br  rounded-lg">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-white">
-                            {session.user?.email?.split("@")[0]}
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            {session.user?.email}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Sign out button */}
-                    <Button
-                      onClick={handleSignOut}
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start text-sm text-gray-300 hover:text-red-400 hover:bg-red-900/20 gap-2"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
-                    </Button>
+                    {initials}
+                  </span>
+                  <span className="sr-only">Open user menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel className="max-w-[240px]">
+                  <div className="truncate">{session.user?.name || "User"}</div>
+                  <div className="truncate text-xs text-muted-foreground">
+                    {session.user?.email}
                   </div>
-                </PopoverContent>
-              </Popover>
-            </>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/profile/${(session.user?.name || "").toLowerCase()}`}
+                  >
+                    Your channel
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <>
-            <div className=" flex justify-center">
-                   Sign in to upload your video
-            </div>
-    
-              {/* Sign in button */}
-              <Button asChild variant="ghost" size="sm" className="text-sm text-gray-600  hover:bg-gray-200">
+              <span className="hidden sm:block text-sm text-gray-600">
+                Sign in to upload your video
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+              >
                 <Link
                   href="/login"
                   onClick={() =>
                     showNotification("Please sign in to continue", "info")
                   }
                 >
-                  <LogIn className="w-4 h-4 mr-2" />
+                  <LogIn className="mr-2 h-4 w-4" />
                   Sign In
                 </Link>
               </Button>
             </>
           )}
         </div>
+      </div>
+
+      {/* Mobile search */}
+      <div className="container mx-auto px-4 pb-3 sm:hidden hidden">
+        <form onSubmit={handleSearch}>
+          <div className="relative">
+            <Input name="q" placeholder="Search videos" className=" pl-9" />
+            <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </form>
       </div>
     </header>
   );
