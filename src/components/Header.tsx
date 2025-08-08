@@ -93,7 +93,7 @@ export default function Header() {
 
         {/* Desktop search */}
         <form
-          onSubmit={handleSearch}
+          // onSubmit={handleSearch}
           className="hidden min-w-0 flex-1 items-center sm:flex"
         >
           <div className="relative mx-auto w-full max-w-xl">
@@ -183,13 +183,11 @@ export default function Header() {
                   </Link> */}
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings">Settings</Link>
+                  {/* <Link href="/settings">Settings</Link> */}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleSignOut}
-                  className="text-red-600 focus:text-red-600"
-                >
+                  className="text-red-600 focus:text-red-600">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
                 </DropdownMenuItem>
@@ -197,9 +195,6 @@ export default function Header() {
             </DropdownMenu>
           ) : (
             <>
-              <span className="hidden sm:block text-sm text-gray-600">
-                Sign in to upload your video
-              </span>
               <Button
                 variant="ghost"
                 size="sm"

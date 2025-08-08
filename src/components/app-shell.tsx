@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
-import { Menu, Search, Upload, Library, History, Flame, Home, ThumbsUp, User, LogIn, LogOut, Settings } from 'lucide-react'
+import { Menu, Search, Upload, Library, History, Flame, Home, ThumbsUp, User, LogIn, LogOut, Settings, Contact } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
@@ -38,6 +38,7 @@ export default function AppShell({
     // { href: "/history", label: "History", icon: History },
     // { href: "/liked", label: "Liked", icon: ThumbsUp },
     { href: "/settings", label: "Settings", icon: Settings },
+    { href: "https://www.nishul.dev", label: "Contact", icon: Contact },
   ]
 
   const onSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -86,8 +87,8 @@ export default function AppShell({
 
       <footer className="mt-auto border-t">
         <div className="container mx-auto flex h-12 items-center justify-between px-4 text-xs text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Streamly</p>
-          <p className="hidden sm:block">Built with Next.js App Router</p>
+          <p>&copy; {new Date().getFullYear()} PlayaVid</p>
+          <p className="hidden sm:block">Developed with ❤️ by Nishul</p>
         </div>
       </footer>
     </div>
