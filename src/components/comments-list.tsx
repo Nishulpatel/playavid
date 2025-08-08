@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
-import { formatDistanceToNow } from "date-fns"
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 type Comment = {
   id: string
