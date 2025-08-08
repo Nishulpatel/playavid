@@ -151,7 +151,7 @@ export default function Header() {
             </Sheet>
           )}
           </div>
-          
+
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -177,11 +177,10 @@ export default function Header() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link
-                    href={`/profile/${(session.user?.name || "").toLowerCase()}`}
-                  >
+                  {/* <Link
+                    href={`/profile/${(session.user?.name || "").toLowerCase()}`}>
                     Your channel
-                  </Link>
+                  </Link> */}
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/settings">Settings</Link>
