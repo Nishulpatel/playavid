@@ -67,7 +67,7 @@ export default function MagicUploadCard() {
         className="p-0"
       >
         <CardHeader className="border-b border-border p-4">
-          <CardTitle>Upload Video</CardTitle>
+          <CardTitle></CardTitle>
           <CardDescription>
             Upload your video file and optionally add a title & description.
           </CardDescription>
